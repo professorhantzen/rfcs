@@ -1,30 +1,102 @@
-# Interledger Protocol (ILP)
+---
+coding: utf-8
 
-## Preface
+title: The Interledger Protocol
+docname: draft-thomas-interledger-01
+category: info
 
-This document specifies the Interledger Protocol (ILP). It draws heavily from the definition of the Internet Protocol (IP) defined in [RFC 791](https://tools.ietf.org/html/rfc791). The interledger protocol is the culmination of more than a decade of research in decentralized payment protocols. This work was started in 2004 by Ryan Fugger, augmented by the development of Bitcoin in 2008 and has involved numerous contributors since then.
+pi: [toc, sortrefs, symrefs, comments]
+smart_quotes: off
 
-## Introduction
+area: security
+author:
+  -
+    ins: S. Thomas
+    name: Stefan Thomas
+    org: Ripple
+    street: 300 Montgomery Street
+    city: San Francisco
+    region: CA
+    code: 94104
+    country: US
+    phone: -----------------
+    email: stefan@ripple.com
+    uri: http://www.ripple.com
+  -
+    ins: E. Schwartz
+    name: Evan Schwartz
+    org: Ripple
+    street: 300 Montgomery Street
+    city: San Francisco
+    region: CA
+    code: 94104
+    country: US
+    phone: -----------------
+    email: evan@ripple.com
+    uri: http://www.ripple.com
+  -
+    ins: A. Hope-Bailie
+    name: Adrian Hope-Bailie
+    org: Ripple
+    street: 300 Montgomery Street
+    city: San Francisco
+    region: CA
+    code: 94104
+    country: US
+    phone: -----------------
+    email: adrian@ripple.com
+    uri: http://www.ripple.com
 
-### Motivation
+normative:
+    RFC3447:
+    RFC4648:
+    draft-thomas-crypto-conditions-01:
+
+informative:
+    RFC2119:
+    RFC3110:
+    RFC4871:
+    RFC791:
+
+--- note_Feedback
+
+This specification is a part of the [Interledger Project](https://interledger.org/) work. Feedback related to this specification should be sent to <public-interledger@w3.org>.
+
+--- abstract
+
+This document specifies the Interledger Protocol (ILP). It draws heavily from the definition of the Internet Protocol (IP) defined in {{RFC791}}. The interledger protocol is the culmination of more than a decade of research in decentralized payment protocols. This work was started in 2004 by Ryan Fugger, augmented by the development of Bitcoin in 2008 and has involved numerous contributors since then.
+
+--- middle
+
+# Introduction (#intro)
 
 Payment networks today are siloed and disconnected. Payments are relatively easy within one country or if the sender and recipient have accounts on the same network or ledger. However, sending from one ledger to another is often impossible. Where connections do exist, they are manual, slow, or expensive.
 
 The Interledger Protocol provides for routing payments across different digital asset ledgers while isolating senders and receivers from the risk of intermediary failures. Secure multi-hop payments and automatic routing enables a global network of networks for different types of value that can connect any sender with any receiver.
 
-### Scope
+## Scope {#scope}
 
 The interledger protocol is intentionally limited in scope to provide the functions necessary to deliver a payment from a source to a destination over an interconnected system of ledgers. It includes minimal requirements for underlying ledgers and it does not include public key infrastructure, identity, liquidity management, or other services commonly found in payment protocols.
 
-### Interfaces
+## Definitions {#definitions}
 
-This protocol is called on by hosts through higher level protocol modules in an interledger environment. Interledger protocol modules call on local ledger protocols to carry the interledger payment to the next connector or destination account.
+### Transfer
+&emsp;Change in ownership of some asset
 
-For example, a [`Simple Payment Setup Protocol (SPSP)`](../0009-simple-payment-setup-protocol/) module would call the interledger module with the address and other parameters in the interledger packet to send a payment. The interledger module would send a transfer to the next connector or destination account along with the interledger packet and according to the parameters given. The transfer and interledger packet would be received by the next host's interledger module and handled by each each successive connector and finally the destination's SPSP module.
+### Ledger
+&emsp;System which records transfers
 
-In the Ripple case, for example, the interledger module would call on a local ledger module which would create a Ripple transaction with the interledger packet attached to transmit to the Ripple Consensus Ledger. The Ripple address would be derived from the interledger address by the local ledger interface and would be the address of some account in the Ripple network, which might belong to a connector to other ledgers.
+### Connector
+&emsp;System which relays transfers between two ledgers
 
-### Operation
+### Payment
+&emsp;An exchange of assets involving one or more transfers on different ledgers
+
+## Basic Concepts {#concepts}
+
+On the Interledger there are two roles. A ledger is a system of accounts, with balances, and the role of the ledger is to record transfers which change the balances of the accounts on the ledger. A connector is a host holding a balance on two or more ledgers. Connectors trade a debit against their balance on one ledger for a credit against their balance on another as a means of facilitating the payment between the two ledgers.
+
+## Operation {#operation}
 
 The central functions of the interledger protocol are addressing hosts and securing payments across different ledgers.
 
@@ -36,33 +108,17 @@ The interledger protocol treats each interledger payment as an independent entit
 
 Interledger payments do not carry a dedicated time-to-live or remaining-hops field. Instead, the amount field acts as an implicit time-to-live: Each time the payment is forwarded, the forwarding connector will take some fee out of the inbound amount. Once a connector recognizes that the inbound amount is worth less (though not necessarily numerically smaller) than the destination amount in the ILP header, it will refuse to forward the payment.
 
-### Definitions
+# Overview {#overview}
 
-##### Transfer
-&emsp;Change in ownership of some asset
+## Relation to Other Protocols {#protocols}
 
-##### Ledger
-&emsp;System which records transfers
+This protocol is called on by hosts through higher level protocol modules in an interledger environment. Interledger protocol modules call on local ledger protocols to carry the interledger payment to the next connector or destination account. In this context a ledger may be a small ledger owned by an individual or organization or a large public ledger such as Bitcoin.
 
-##### Connector
-&emsp;System which relays transfers between two ledgers
+For example, a [Simple Payment Setup Protocol (SPSP)](../0009-simple-payment-setup-protocol/) module would call the interledger module with the address and other parameters in the interledger packet to send a payment. The interledger module would send a transfer to the next connector or destination account along with the interledger packet and according to the parameters given. The transfer and interledger packet would be received by the next host's interledger module and handled by each each successive connector and finally the destination's SPSP module.
 
-##### Payment
-&emsp;An exchange of assets involving one or more transfers on different ledgers
+## Model of Operation {#model}
 
-## Overview
-
-### Relation to Other Protocols
-
-The following diagram illustrates the place of the interledger protocol in the protocol hierarchy:
-
-![Interledger model](../0001-interledger-architecture/assets/interledger-architecture-layers.png)
-
-The interledger protocol interfaces on one side to the higher level end-to-end protocols and on the other side to the local ledger protocol. In this context a "ledger" may be a small ledger owned by an individual or organization or a large public ledger such as Bitcoin.
-
-### Model of Operation
-
-#### Without Holds ("Optimistic Mode")
+### Without Holds ("Optimistic Mode")
 
 The protocol MAY be used without the security provided by holds -- sometimes referred to as "Optimistic Mode". The model of operation for transmitting funds from one application to another without holds is illustrated by the following scenario:
 
@@ -159,15 +215,15 @@ The protocol MAY be used with transfer holds to ensure a sender's funds are deli
 
 21. The sender's application receives the fulfillment notification and reacts accordingly.
 
-### Function Description
+## Function Description {#function}
 
 The purpose of the interledger protocol is to enable hosts to route payments through an interconnected set of ledgers. This is done by passing the payments from one interledger module to another until the destination is reached. The interledger modules reside in hosts and connectors in the interledger system. The payments are routed from one interledger module to another through individual ledgers based on the interpretation of an interledger address. Thus, a central component of the interledger protocol is the interledger address.
 
 When routing payments with relatively large amounts, the connectors and the intermediary ledgers they choose in the routing process may not be trusted. Holds provided by underlying ledgers MAY be used to protect the sender and receivers from this risk. In this case, the ILP packet contains a cryptographic condition and expiration date.
 
-#### Addressing
+### Addressing {#addressing}
 
-As with the [internet protocol](https://tools.ietf.org/html/rfc791#section-2.3), interledger distinguishes between names, addresses, and routes.
+As with the {{RFC791}}, interledger distinguishes between names, addresses, and routes.
 > "A name indicates what we seek. An address indicates where it is. A route indicates how to get there. The internet protocol deals primarily with addresses. It is the task of higher level (i.e., end-to-end or application) protocols to make the mapping from names to addresses."
 
 The interledger module translates interledger addresses to local ledger addresses. Connectors and local ledger interfaces are responsible for translating addresses into interledger routes and local routes, respectively.
@@ -180,15 +236,13 @@ ilp:us.bank1.bob
 
 Care must be taken in mapping interledger addresses to local ledger accounts. Examples of address mappings may be found in "Address Mappings" ((TODO)).
 
-### Connectors
+### Connectors {#connectors}
 
-Connectors implement the interledger protocol to forward payments between ledgers. Connectors also implement the [Connector to Connector Protocol (CCP)](../0010-connector-to-connector-protocol/) to coordinate routing and other interledger control information.
+Connectors implement the interledger protocol to forward payments between ledgers. Connectors also implement other protocols to coordinate routing and other interledger control information.
 
-![Interledger is an overlay across ledgers](assets/ilp-ledger-relation.png)
+## Specification {#specification}
 
-## Specification
-
-### ILP Header Format
+### ILP Header Format {#ilp-header}
 
 Here is a summary of the fields in the ILP header format:
 
@@ -197,18 +251,8 @@ Here is a summary of the fields in the ILP header format:
 | version | INTEGER(0..255) | ILP protocol version (currently `1`) |
 | destinationAddress | IlpAddress | Address corresponding to the destination account |
 | destinationAmount | IlpAmount | Amount the destination account should receive, denominated in the asset of the destination ledger |
-| nextHeader | INTEGER(0..65535) | Type of the next header |
-
-**TODO**: should we have the `sourceAddress` for sending error messages back?
-
-
-<!--
-| source | IlpAddress | Address corresponding to the source account. |
-| destinationPrepareBy | IlpTimestamp | Time by which the final transfer should be prepared, otherwise the recipient may not attempt to fulfill the condition |
-| condition | OCTET STRING | See the [condition spec](https://interledger.org/five-bells-condition/spec.html). The condition may be included in the packet or may be transmitted through the ledger layer. |
-| data | OCTET STRING | Message or other data to be delivered to the destination account along with the payment (i.e. destination credit memo) |
+| condition | OCTET STRING | See [draft-thomas-crypto-conditions-01](#draft-thomas-crypto-conditions-01). The condition may be included in the packet or may be transmitted through the ledger layer. |
 | expiresAt | IlpTimestamp | Maximum expiry time of the last transfer that the recipient will accept |
--->
 
 #### version
 <code>INTEGER(0..255)</code>
@@ -225,83 +269,17 @@ Hierarchical routing label.
 
 Base 10 encoded amount.
 
-**TODO**: Are we going to regret the base-10 encoding?
+#### condition
+<code>???</code>
 
-#### nextHeader
-<code>INTEGER(0..65535)</code>
+???
 
-Type of the next header.
+#### expiresAt
+<code>???</code>
 
-Header types include optional interledger extension headers, such as the [Source Routing Header](#source-routing-header-format) and transport protocols, such as [Optimistics Transport Protocol (OTP)](../0005-optimistic-transport-protocol/).
+???
 
-The list of headers is terminated by the special value `0xffff`, i.e. all bits set. When a ledger module finishes processing a header containing this value as its `nextHeader`, it MUST stop parsing and forward all remaining bytes without modification.
-
-When an interledger module encounters an unknown header type, it MUST act according to the value of the two most significant bits:
-
-| Bits | Meaning |
-|:--|:--|
-| 00 | Drop the payment, reply with an error, issue a refund if possible |
-| 01 | Drop the payment, reply with an error, do not issue a refund |
-| 10 | Drop the payment quietly, do not reply |
-| 11 | Ignore the header, process the payment as if the header wasn't there |
-
-The list of header types is managed by IANA, please see [Header Type Registry](#header-type-registry).
-
-### Generic Extension Header Format
-
-Here is a description of the format that all headers (except the ILP header) MUST follow:
-
-| Field | Type | Short Description |
-|:--|:--|:--|
-| nextHeader | INTEGER | Type of the next header |
-| size | INTEGER | Size of this header in octets |
-
-#### nextHeader
-<code>INTEGER(0..65535)</code>
-
-See [`nextHeader`](#nextheader).
-
-#### size
-<code>INTEGER(0..65535)</code>
-
-Total size of the header in bytes, including the generic header fields.
-
-### Memo Locator Header Format
-
-This header indicates where in the payload (remaining data after the headers) the user memo can be found. If this header is not provided, the interledger module MUST assume that the entire payload is the user memo. All interledger modules MUST support this header type.
-
-This header is provided for forward compatibility. Future extensions to the protocol may need to carry more data than can fit in a 64KB header. This header allows them to re-map the location of the user data in the payload and add their own content to the payload. By supporting this header from the start, we ensure that this functionality will be backwards compatible with all ILP implementations.
-
-| Field | Type | Short Description |
-|:--|:--|:--|
-| nextHeader | INTEGER | Type of the next header |
-| size | INTEGER | Size of this header in octets |
-| memoPosition | INTEGER | Starting position of the memo |
-| memoSize | INTEGER | Size of the memo in octets |
-
-#### memoPosition
-<code>INTEGER(0..4294967295)</code>
-
-Starting position of the memo. Interledger modules MUST start reading the memo this many octets after the start of the payload.
-
-If `memoPosition` is greater than the payload size, interledger modules SHOULD drop the payment.
-
-#### memoSize
-<code>INTEGER(0..4294967295)</code>
-
-Size of the memo in octets.
-
-If `memoPosition + memoSize` is greater than the payload size, interledger modules SHOULD drop the payment.
-
-### Hop-by-hop Header Format
-
-This header may be used for source routing.
-
-**TODO**: Document format.
-
-## Discussion
-
-### Holds Without Native Ledger Support
+## Holds Without Native Ledger Support {#holds}
 
 Not all ledgers support held transfers. In the case of a ledger that doesn't, the sender and recipient of the local ledger transfer MAY choose a commonly trusted party to carry out the hold functions. There are three options:
 
@@ -312,18 +290,12 @@ Not all ledgers support held transfers. In the case of a ledger that doesn't, th
 3. The sender and receiver MAY appoint a mutually trusted third-party which has an account on the local ledger. The sender performs a regular transfer into a neutral third-party account. In the first step, funds are transfered into the account belonging to the neutral third-party.
 ### Payment Channels
 
-## Appendix A: ASN.1 Module
+--- back
 
-## Appendix B: IANA Considerations
+# Security Considerations
 
-### Header Type Registry
+TODO
 
-The following initial entries should be added to the Interledger Header Type registry to be created and maintained at (the suggested URI) http://www.iana.org/assignments/interledger-header-types:
+# IANA Considerations {#appendix-e}
 
-| Header Type ID | Description |
-|:--|:--|
-| 0 | [Interledger Protocol (ILP)](#ilp-header-format) |
-| 1 | [Optimistic Transport Protocol (OTP)](../0005-optimistic-transport-protocol/) |
-| 2 | [Universal Transport Protocol (UTP)](../0006-universal-transport-protocol/) |
-| 3 | [Atomic Transport Protocol (ATP)](../0007-atomic-transport-protocol/) |
-| 4 | [Interledger Quoting Protocol (ILQP)](../0008-interledger-quoting-protocol/) |
+TODO
