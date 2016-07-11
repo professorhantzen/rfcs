@@ -2,7 +2,7 @@
 coding: utf-8
 
 title: The Interledger Protocol
-docname: draft-thomas-interledger-01
+docname: draft-thomas-interledger-00
 category: info
 
 pi: [toc, sortrefs, symrefs, comments]
@@ -48,15 +48,17 @@ author:
     uri: http://www.ripple.com
 
 normative:
-    RFC3447:
-    RFC4648:
-    draft-thomas-crypto-conditions-01:
+    draft-thomas-crypto-conditions-00:
+         title: "Crypto Conditions"
+         author:
+           -
+             ins: S. Thomas
+             name: Stefan Thomas
+             org: Ripple
+         date: July 2016
 
 informative:
-    RFC2119:
-    RFC3110:
-    RFC4871:
-    RFC791:
+    RFC0791:
 
 --- note_Feedback
 
@@ -64,7 +66,7 @@ This specification is a part of the [Interledger Project](https://interledger.or
 
 --- abstract
 
-This document specifies the Interledger Protocol (ILP). It draws heavily from the definition of the Internet Protocol (IP) defined in {{RFC791}}. The interledger protocol is the culmination of more than a decade of research in decentralized payment protocols. This work was started in 2004 by Ryan Fugger, augmented by the development of Bitcoin in 2008 and has involved numerous contributors since then.
+This document specifies the Interledger Protocol (ILP). It draws heavily from the definition of the Internet Protocol (IP) defined in [RFC0791](#RFC0791). The interledger protocol is the culmination of more than a decade of research in decentralized payment protocols. This work was started in 2004 by Ryan Fugger, augmented by the development of Bitcoin in 2008 and has involved numerous contributors since then.
 
 --- middle
 
@@ -223,7 +225,7 @@ When routing payments with relatively large amounts, the connectors and the inte
 
 ### Addressing {#addressing}
 
-As with the {{RFC791}}, interledger distinguishes between names, addresses, and routes.
+As with the [RFC0791](#RFC0791), interledger distinguishes between names, addresses, and routes.
 > "A name indicates what we seek. An address indicates where it is. A route indicates how to get there. The internet protocol deals primarily with addresses. It is the task of higher level (i.e., end-to-end or application) protocols to make the mapping from names to addresses."
 
 The interledger module translates interledger addresses to local ledger addresses. Connectors and local ledger interfaces are responsible for translating addresses into interledger routes and local routes, respectively.
