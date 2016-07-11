@@ -251,33 +251,42 @@ Here is a summary of the fields in the ILP header format:
 | version | INTEGER(0..255) | ILP protocol version (currently `1`) |
 | destinationAddress | IlpAddress | Address corresponding to the destination account |
 | destinationAmount | IlpAmount | Amount the destination account should receive, denominated in the asset of the destination ledger |
-| condition | OCTET STRING | See [draft-thomas-crypto-conditions-01](#draft-thomas-crypto-conditions-01). The condition may be included in the packet or may be transmitted through the ledger layer. |
+| condition | OCTET STRING | See [draft-thomas-crypto-conditions-00](#draft-thomas-crypto-conditions-00). The condition may be included in the packet or may be transmitted through the ledger layer. |
 | expiresAt | IlpTimestamp | Maximum expiry time of the last transfer that the recipient will accept |
 
 #### version
-<code>INTEGER(0..255)</code>
+
+    INTEGER(0..255)
 
 The version of the Interledger Protocol being used. This document describes version `1`.
 
 #### destinationAddress
-<code>IlpAddress :== SEQUENCE OF OCTET STRING</code>
+
+    IlpAddress :== SEQUENCE OF OCTET STRING
 
 Hierarchical routing label.
 
 #### destinationAmount
-<code>IlpAmount :== SEQUENCE { mantissa INTEGER, exponent INTEGER(-128..127) }</code>
+
+    IlpAmount :== SEQUENCE { mantissa INTEGER, exponent INTEGER(-128..127) }
 
 Base 10 encoded amount.
 
 #### condition
-<code>???</code>
 
-???
+    IlpCondition :== Condition</code>
+
+Crypto-condition in binary format as defined in [draft-thomas-crypto-conditions-00](#draft-thomas-crypto-conditions-00).
+
+When processing a transfer carrying a condition a ledger MUST place a hold on the funds. While the funds are on hold, neither the sender nor recipient are able to access them. Upon receiving a condition fulfillment, a ledger MUST transfer the funds to the recipient if the funds are held, the fulfillment is a valid fulfillment of the transfer condition and the transfer has not yet expired. ("Universal Mode")
+
+The condition is an optional field. If no condition is provided, the funds are immediately credited to the recipient of the transfer. ("Optimistic Mode")
 
 #### expiresAt
-<code>???</code>
 
-???
+    IlpExpiry :== GeneralizedTime
+
+Ledgers MAY require that all transfers with a condition also carry an expiry timestamp. Ledgers MUST reject transfers that carry an expiry timestamp, but no condition. Ledgers MUST reject transfers whose expiry transfer time has been reached or exceeded and whose condition has not yet been fulfilled. When rejecting a transfer, the ledger MUST lift the hold and make the funds available to the sender again.
 
 ## Holds Without Native Ledger Support {#holds}
 
