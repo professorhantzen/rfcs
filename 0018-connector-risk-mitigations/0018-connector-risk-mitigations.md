@@ -1,8 +1,6 @@
 # Connector Risk Mitigations
 
-Interledger protects senders from risk but connectors take some risk in exchange for the revenue they generate from facilitating payments.
-
-This document outlines the major categories of risks connectors face and suggests some possible mitigations.
+Interledger connectors take some risk in exchange for the revenue they generate from facilitating payments. This document outlines the major categories of risks connectors face and suggests some possible mitigations.
 
 This is a work in progress and is not an exhaustive list.
 
