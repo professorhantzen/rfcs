@@ -153,7 +153,7 @@ The mapping from the ILP address to the local ledger address is dependent on the
 #### getBalance
 <code>ledgerPlugin.getBalance() ⇒ Promise.&lt;String></code>
 
-Return an integer decimal string (`..., '-3', '-2', '-1', '0', '1', '2', '3', ...`) representing the current balance, in the ledger's base unit. For example, on a ledger with `currencyCode` 'USD' and `currencyScale` 6,
+Return a (base-ten) integer string (`..., '-3', '-2', '-1', '0', '1', '2', '3', ...`) representing the current balance, in the ledger's base unit. For example, on a ledger with `currencyCode` 'USD' and `currencyScale` 6,
 the base unit would be micro-dollars.
 A balance of '1230000' should then be interpreted as equivalent to 1.23 US dollars. The maximum and minimum balance are up to the ledger to determine. Plugin must be connected, otherwise the promise should reject.
 
@@ -459,7 +459,7 @@ ILP Address prefix of the ledger that this transfer is going through on.
 #### amount
 <code>**amount**:String</code>
 
-An integer amount, represented as a string of decimal digits. MUST be `>= 0` and `< 2^64`.
+An integer amount, represented as a string of base-ten digits. MUST be `>= 0` and `< 2^64`.
 
 #### ilp
 <code>**ilp**:String</code>
@@ -606,7 +606,11 @@ The prefix may be configured, automatically detected, or hard-coded, depending o
 #### currencyCode
 <code>**currencyCode**:String</code>
 
-The [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) currency code (if any) used by the ledger. A custom all-caps three-letter code, not used by ISO 4217, otherwise. Ledger administrators who choose a custom currency code MAY request their chosen currency code be listed by software modules that map currency codes to currency symbols, for instance on node package manager (npm) in the case of JavaScript. The currencyCode is only meaningful in combination with the currencyScale (below).
+The [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) currency code (if any) used by the ledger. A custom all-caps three-letter code, not used by ISO 4217, otherwise.
+Ledger administrators who choose a custom currency code MAY request a custom currency symbol for their chosen currency code be listed by software modules that map currency codes to currency symbols,
+for instance on node package manager (npm) in the case of JavaScript.
+To translate an integer amount or balance from the ledger, the currencyCode by itself is not enough. It has to be used in combination with the currencyScale (below) to determine how many
+of the ledger's base units correspond to one currency unit.
 
 #### currencyScale
 <code>**currencyScale**:String</code>
