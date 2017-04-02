@@ -32,7 +32,7 @@ If the ledgers represent different assets, the connectors set the exchange rate 
 
 Connectors *peer* with one another to exchange information used to determine the best route for a payment.
 
-**Interledger ensures that senders' funds are safe throughout an multi-hop payment and cannot be stolen by faulty or malicious connectors (see [Interledger Security](#interledger-security)).**
+**Interledger ensures that senders' funds are safe throughout a multi-hop payment and cannot be stolen by faulty or malicious connectors (see [Interledger Security](#interledger-security)).**
 
 ### The Interledger
 
