@@ -18,7 +18,7 @@ These building blocks - described in the next section - were created to fit toge
 
 What the Internet did for information, Interledger aims to do for value.
 
-_(Key point: There are many kinds of assets, even within an asset group such as "money".  For example, US Dollars, Japanese Yen and Mexican Peso's are all different kinds of money.  Gold and Silver are different kinds of "precious metals" - another asset group. There are also many systems to keep track of who owns what asset, and to handle exchanges of one kind of asset for another.  The problem is, the systems don't always connect to each other very well, if they connect at all.  It can be difficult, costly and time-consuming to send value around the world at the present time.  ILP makes it easy, cost-effective and fast.)_
+_Key point: There are many kinds of assets, even within an asset group such as "money".  For example, US Dollars, Japanese Yen and Mexican Peso's are all different kinds of money.  Gold and Silver are different kinds of "precious metals" - another asset group. There are also many systems to keep track of who owns what asset, and to handle exchanges of one kind of asset for another.  The problem is, the systems don't always connect to each other very well, if they connect at all.  It can be difficult, costly and time-consuming to send value around the world at the present time.  ILP can make it easy, cost-effective and fast._
 
 ### ILP Basics: Building Blocks
 
@@ -27,9 +27,9 @@ _(Key point: There are many kinds of assets, even within an asset group such as 
 - Connector
 - Ledger
 
-**Senders** want to send an asset to a particular receiver. Senders know the amount being sent and to whom. Sending something valuable can cost money, and in ILP this cost may be subtracted from the asset amount as it is transmitted.  So, senders are aware that what arrives could be less than what is sent, and are prepared for how much that could be.
+**Senders** want to send an asset to a particular party (a _Receiver_, explained next). Senders know the amount being sent and to whom. Sending something valuable can cost money, and in ILP this cost may be subtracted from the asset amount as it is transmitted.  So, senders are aware that what arrives could be less than what is sent, and are prepared for how much that could be.
 
-**Receivers** are expecting or allowing an asset to arrive from a particular sender. Receivers may know how much to expect, or to expect something to arrive and from whom, but not how much.
+**Receivers** are expecting or allowing an asset to arrive from a particular sender. Receivers always know from whom an amount could arrive, but don't always know how much that will be.
 
 **Connectors** want to link senders with receivers to make ILP payments possible. Connectors also link up with other connectors. This is done to connect as many senders with receivers as possible, through chains of connectors that are built for each payment.
 
